@@ -1,7 +1,9 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,5 +60,10 @@ public class Fotoverwaltung extends Activity
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickyClick(MenuItem menuItem){
+        CamClass cam = new CamClass();
+        startActivityForResult(cam.startCam(), 1);
     }
 }
