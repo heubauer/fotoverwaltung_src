@@ -23,26 +23,30 @@ public class Fotoverwaltung extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
+        fillPictureList();
+    }
+
+    private void fillPictureList(/*hier irgendwann Übergabeparamerter*/){
         pictureList = (ListView) findViewById(R.id.pictureList);
-        
+
         String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-        "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-        "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-        "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-        "Android", "iPhone", "WindowsMobile" };
-        
+                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
+                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
+                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
+                "Android", "iPhone", "WindowsMobile" };
+
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
         pictureList.setAdapter(listAdapter);
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+
             }
         });
-    
+
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
