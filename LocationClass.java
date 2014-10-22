@@ -15,7 +15,9 @@ public class LocationClass {
     private Location currentLocation;
 
     public LocationClass(LocationManager locationManager){
+
         this.locationManager= locationManager;
+
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
@@ -39,11 +41,26 @@ public class LocationClass {
 
             }
         };
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
     }
 
     public Location getCurrentLocacion(){
 
+        if (currentLocation == null){
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
         return currentLocation;
+    }
+
+    public void stopOnLocationChanged(){
+        locationManager.removeUpdates(locationListener);
+    }
+
+    public void showLoactionOnMap(Location location){
+
+
 
     }
 

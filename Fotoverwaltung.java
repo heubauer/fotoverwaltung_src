@@ -93,19 +93,27 @@ public class Fotoverwaltung extends Activity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.Picy) {
+        if (id == R.id.Camera) {
             onShootAPictureClick();
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void onShootAPictureClick(){
+
+        //hiermit wird das Event onLocationChanged gestartet, sollte sich jemand nach dem Öffnen
+        //der Kamera noch weit bewegen wird dadurch sicher gestellt, dass wir die aktuellste
+        //Location beziehen.
+        LocationClass locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
 
-        LocationClass locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
-
-        Toast toast = Toast.makeText(getApplicationContext(), "" +locationClass.getCurrentLocacion(), Toast.LENGTH_LONG);
-        toast.show();
+        //Testweise:
+        Toast toasty = Toast.makeText(getApplicationContext(), ""+ locationClass.getCurrentLocacion(), Toast.LENGTH_LONG);
+        toasty.show();
+        locationClass.stopOnLocationChanged();
+        //Nach dem das Bild gespeichert wurde muss es an die BildClass weiter gegeben werden und dort muss
+        //auch das onLactionChanged Event entfernt/gestoppt werden.
     }
 }
