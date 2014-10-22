@@ -12,7 +12,6 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
-ASC
 public class Fotoverwaltung extends Activity
 {
     SimpleAdapter headerAdapter, pictureAdapter;
@@ -69,7 +68,7 @@ public class Fotoverwaltung extends Activity
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+                Log.e("test", "test");
             }
         });
     }
