@@ -70,14 +70,10 @@ public class Fotoverwaltung extends Activity
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-<<<<<<< HEAD
-                Log.e("test", "test");
-=======
                 //To see reaction.
                 TextView filename = (TextView) findViewById(R.id.filename);
                 Toast toast = Toast.makeText(getApplicationContext(), "Ausgewählt: ", Toast.LENGTH_SHORT);
                 toast.show();
->>>>>>> 0989be2148da87a7e9a66b2e0f2c3febf88d900c
             }
         });
     }
