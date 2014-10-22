@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -69,7 +71,10 @@ public class Fotoverwaltung extends Activity
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                
+                //To see reaction.
+                TextView filename = (TextView) findViewById(R.id.filename);
+                Toast toast = Toast.makeText(getApplicationContext(), "Ausgewählt: ", Toast.LENGTH_SHORT);
+                toast.show();
             }
         });
     }
