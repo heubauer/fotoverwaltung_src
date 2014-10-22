@@ -1,8 +1,8 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 public class Fotoverwaltung extends Activity
 {
     SimpleAdapter headerAdapter, pictureAdapter;
@@ -52,7 +53,6 @@ public class Fotoverwaltung extends Activity
         headerMap.put("filename", getString(R.string.filename));
         headerMap.put("date", getString(R.string.date));
         headerListText.add(headerMap);
-        
 
         headerAdapter = new SimpleAdapter(this, headerListText, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
         headerList.setAdapter(headerAdapter);
@@ -92,13 +92,18 @@ public class Fotoverwaltung extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.Picy) {
-            onClickyClick();
+            onShootAPictureClick();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClickyClick(){
+    public void onShootAPictureClick(){
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
+
+        LocationClass locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+
+        Toast toast = Toast.makeText(getApplicationContext(), "" +locationClass.getCurrentLocacion(), Toast.LENGTH_LONG);
+        toast.show();
     }
 }
