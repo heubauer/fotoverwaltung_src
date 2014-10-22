@@ -4,9 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,6 +61,7 @@ public class Fotoverwaltung extends Activity
         headerMap.put("filename", getString(R.string.filename));
         headerMap.put("date", getString(R.string.date));
         headerListText.add(headerMap);
+        
 
         headerAdapter = new SimpleAdapter(this, headerListText, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
         headerList.setAdapter(headerAdapter);
@@ -102,7 +103,7 @@ public class Fotoverwaltung extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.Picy) {
-            onShootAPictureClick();
+            onClickyClick();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -128,14 +129,9 @@ public class Fotoverwaltung extends Activity
             }
         }
     }
-    
-    public void onShootAPictureClick(){
+
+    private void onClickyClick(){
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
-
-        LocationClass locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
-
-        Toast toast = Toast.makeText(getApplicationContext(), "" +locationClass.getCurrentLocacion(), Toast.LENGTH_LONG);
-        toast.show();
     }
 }

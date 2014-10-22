@@ -1,10 +1,6 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.util.Log;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,12 +12,8 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Date;
 
 public class Fotoverwaltung extends Activity
 {
@@ -106,29 +98,7 @@ public class Fotoverwaltung extends Activity
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
-            try {
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
-                Bitmap bitmap1 = (Bitmap) data.getExtras().get("data");
-                if (bitmap1 != null) {
-                    File image = new File(getDir("Fotos", Context.MODE_PRIVATE), timeStamp + ".jpeg");
-                    FileOutputStream fOut = new FileOutputStream(image);
-                    
-                    bitmap1.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                    fOut.flush();
-                    fOut.close();
-                    Log.i("", ""+image);
-                }
-            } catch (Exception e) {
-                
-            }
-        }
-    }
-    
     public void onShootAPictureClick(){
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);

@@ -1,12 +1,17 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
+<<<<<<< HEAD
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
+=======
 import android.location.LocationManager;
 import android.os.Bundle;
+>>>>>>> 0aae6f5b7a4aed997df89879f86e7cd08a5fa8de
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +26,10 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.Date;
+=======
+>>>>>>> 0aae6f5b7a4aed997df89879f86e7cd08a5fa8de
 
 public class Fotoverwaltung extends Activity
 {
@@ -128,8 +136,12 @@ public class Fotoverwaltung extends Activity
             }
         }
     }
-    
+
+<<<<<<< HEAD
+    private void onClickyClick(){
+=======
     public void onShootAPictureClick(){
+>>>>>>> 0aae6f5b7a4aed997df89879f86e7cd08a5fa8de
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
 
