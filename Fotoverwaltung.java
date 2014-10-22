@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+ASC
 public class Fotoverwaltung extends Activity
 {
     SimpleAdapter headerAdapter, pictureAdapter;
