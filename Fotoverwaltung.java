@@ -1,21 +1,24 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Fotoverwaltung extends Activity
 {
-    ArrayAdapter<String> listAdapter;
-    ListView pictureList;
+    SimpleAdapter headerAdapter, pictureAdapter;
+    ArrayList<HashMap<String, String>> headerListText, pictureListContent;
+    HashMap<String, String> headerMap, pictureMap;
+    ListView headerList, pictureList;
 
     /** Called when the activity is first created. */
     @Override
@@ -23,28 +26,52 @@ public class Fotoverwaltung extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        
+        String[] countries = { "India", "Pakistan", "China", "Bangladesh","Afghanistan",
+                            "India", "Pakistan", "China", "Bangladesh","Afghanistan",
+                            "India", "Pakistan", "China", "Bangladesh","Afghanistan",
+                            "India", "Pakistan", "China", "Bangladesh","Afghanistan"};
+        String[] capitals = { "New Delhi", "Islamabad", "Beijing", "Dhaka","Kabul",
+                            "New Delhi", "Islamabad", "Beijing", "Dhaka","Kabul",
+                            "New Delhi", "Islamabad", "Beijing", "Dhaka","Kabul",
+                            "New Delhi", "Islamabad", "Beijing", "Dhaka","Kabul"};
 
-        fillPictureList();
+        fillPictureList(countries, capitals);
     }
 
-    private void fillPictureList(/*hier irgendwann Übergabeparamerter*/){
+    private void fillPictureList(String[] filename, String[] date){
+        headerListText = new ArrayList<HashMap<String, String>>();
+        pictureListContent = new ArrayList<HashMap<String, String>>();
+        
+        headerList = (ListView) findViewById(R.id.headerList);
         pictureList = (ListView) findViewById(R.id.pictureList);
 
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
+        headerMap = new HashMap<String, String>();
+        headerMap.put("filename", getString(R.string.filename));
+        headerMap.put("date", getString(R.string.date));
+        headerListText.add(headerMap);
+        
 
-        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
-        pictureList.setAdapter(listAdapter);
+        headerAdapter = new SimpleAdapter(this, headerListText, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
+        headerList.setAdapter(headerAdapter);
+        
+        for (int i = 0; i < filename.length; i++) {
+            pictureMap = new HashMap<String, String>();
+
+            pictureMap.put("filename", filename[i]);
+            pictureMap.put("date", date[i]);
+            pictureListContent.add(pictureMap);
+        }        
+        
+        pictureAdapter = new SimpleAdapter(this, pictureListContent, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
+        pictureList.setAdapter(pictureAdapter);
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                
             }
         });
-
     }
 
     @Override
@@ -61,12 +88,12 @@ public class Fotoverwaltung extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.Picy) {
-            return true;
+            onClickyClick();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClickyClick(MenuItem menuItem){
+    public void onClickyClick(){
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
     }
