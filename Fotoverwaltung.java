@@ -1,7 +1,6 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -11,16 +10,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Fotoverwaltung extends Activity
 {
     ListControl listCtrl;
+    LocationClass locationClass;
     
     /** Called when the activity is first created. */
     @Override
@@ -57,22 +57,26 @@ public class Fotoverwaltung extends Activity
         if (requestCode == 1) {
             try {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-
-                Bitmap bitmap1 = (Bitmap) data.getExtras().get("data");
-                if (bitmap1 != null) {
+                String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
+                XmlParser parser = new XmlParser(this);
+                locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+                        
+                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                if (bitmap != null) {
                     File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpeg");
-                    FileOutputStream fOut = new FileOutputStream(image);
+                    image.getParentFile().mkdirs();
+                    FileOutputStream out = new FileOutputStream(image);
                     
-                    bitmap1.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
-                    fOut.flush();
-                    fOut.close();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
+                    out.flush();
+                    out.close();
                     
-                    Log.i("newFile", "" + image);
-                    
+                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date, "" + locationClass.getCurrentLocation()});
+                                        
                     listCtrl.updatePictureList();
                 }
-            } catch (Exception e) {
-                
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -82,13 +86,13 @@ public class Fotoverwaltung extends Activity
         //hiermit wird das Event onLocationChanged gestartet, sollte sich jemand nach dem Öffnen
         //der Kamera noch weit bewegen wird dadurch sicher gestellt, dass wir die aktuellste
         //Location beziehen.
-        LocationClass locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
 
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
 
         //Testweise:
-        Toast toasty = Toast.makeText(getApplicationContext(), ""+ locationClass.getCurrentLocacion(), Toast.LENGTH_LONG);
+        Toast toasty = Toast.makeText(getApplicationContext(), ""+ locationClass.getCurrentLocation(), Toast.LENGTH_LONG);
         toasty.show();
         locationClass.stopOnLocationChanged();
         //Nach dem das Bild gespeichert wurde muss es an die BildClass weiter gegeben werden und dort muss

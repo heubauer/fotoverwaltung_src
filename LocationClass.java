@@ -46,7 +46,7 @@ public class LocationClass {
 
     }
 
-    public Location getCurrentLocacion(){
+    public Location getCurrentLocation(){
 
         if (currentLocation == null){
             currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
