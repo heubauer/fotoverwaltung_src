@@ -72,8 +72,10 @@ public class Fotoverwaltung extends Activity
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //To see reaction.
+                HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
                 TextView filename = (TextView) findViewById(R.id.filename);
-                Toast toast = Toast.makeText(getApplicationContext(), "Ausgewählt: ", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Ausgewählt: " +  
+                        entry.get("filename"), Toast.LENGTH_SHORT);
                 toast.show();
             }
         });
