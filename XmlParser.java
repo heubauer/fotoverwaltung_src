@@ -5,6 +5,7 @@ import android.util.Log;
 import android.util.Xml;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -30,48 +31,41 @@ class Image {
 public class XmlParser {
     private ArrayList<Image> images;
     private final Context context;
+    private final File xmlFile;
     
     public XmlParser(Context context) {
         images = null;
-        this.context = context;        
+        xmlFile = new File(context.getFilesDir(), "imageData.xml");
+        this.context = context;
         
         XmlPullParserFactory pullParserFactory;
         try {
             pullParserFactory = XmlPullParserFactory.newInstance();
             XmlPullParser parser = pullParserFactory.newPullParser();
+            
+            if(!xmlFile.exists()) {                
+                xmlFile.createNewFile();
+                
+                FileWriter fstream = new FileWriter(xmlFile.getAbsolutePath(), true);
+                BufferedWriter out = new BufferedWriter(fstream);
 
-            InputStream in_s = getInputStream();
+                out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                out.newLine();
+
+                out.close();
+            }
+            
+            InputStream in_s = new FileInputStream(xmlFile);
+
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in_s, null);
 
             parseXML(parser);
 
         } catch (XmlPullParserException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         } catch (IOException e) {
-                e.printStackTrace();
-        }
-    }
-    
-    private InputStream getInputStream() throws IOException{
-        try {
-            InputStream in_s = context.getAssets().open("imageData.xml");
-            return in_s;
-        } catch (FileNotFoundException e) {
-            Log.i("", "komme hier rein");
-            File xmlFile = new File(context.getFilesDir(), "imageData.xml");
-            xmlFile.createNewFile();
-                
-            FileWriter fstream = new FileWriter(xmlFile, true);
-            BufferedWriter out = new BufferedWriter(fstream);
-
-            out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            out.newLine();
-
-            out.close();
-            
-            InputStream in_s = context.getAssets().open("imageData.xml");
-            return in_s;
+            e.printStackTrace();
         }
     }
     
@@ -80,28 +74,28 @@ public class XmlParser {
         Image currentImg = null;
 
         while (eventType != XmlPullParser.END_DOCUMENT){
-            String name = null;
+            String name;
             switch (eventType){
                 case XmlPullParser.START_DOCUMENT:
                         images = new ArrayList();
                     break;
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
-                    if (name == "image"){
+                    if ("image".equals(name)){
                         currentImg = new Image();
                     } else if (currentImg != null){
-                        if (name == "filename"){
+                        if ("filename".equals(name)){
                             currentImg.name = parser.nextText();
-                        } else if (name == "date"){
+                        } else if ("date".equals(name)){
                             currentImg.date = parser.nextText();
-                        } else if (name == "geoData"){
+                        } else if ("geoData".equals(name)){
                             currentImg.geoData= parser.nextText();
                         }  
                     }
                     break;
                 case XmlPullParser.END_TAG:
                     name = parser.getName();
-                    if (name.equalsIgnoreCase("product") && currentImg != null){
+                    if (name.equalsIgnoreCase("image") && currentImg != null){
                         images.add(currentImg);
                     } 
             }
@@ -117,12 +111,11 @@ public class XmlParser {
         return images;
     }
     
-    public String writeXml(String[] imgData){
+    public void writeXml(String[] imgData){
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         try {
             serializer.setOutput(writer);
-            serializer.startDocument("UTF-8", true);
             serializer.startTag("", "image");
             
             serializer.startTag("", "filename");
@@ -137,9 +130,19 @@ public class XmlParser {
             
             serializer.endTag("", "image");
             serializer.endDocument();
-            return writer.toString();
+            writeXmlToFile(writer.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         } 
+    }
+    
+    private void writeXmlToFile (String xmlString) throws IOException{     
+        FileWriter fstream = new FileWriter(xmlFile.getAbsolutePath(), true);
+        BufferedWriter out = new BufferedWriter(fstream);
+
+        out.write(xmlString);
+        out.newLine();
+
+        out.close();
     }
 }

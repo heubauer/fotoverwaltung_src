@@ -60,8 +60,6 @@ public class LocationClass {
 
     public void showLoactionOnMap(Location location){
 
-
-
     }
 
 }

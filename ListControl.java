@@ -31,7 +31,7 @@ public class ListControl {
         this.context = context;
     }
     
-    public void createPictureList(){
+    public void createList(){
         headerListText = new ArrayList<HashMap<String, String>>();
         pictureListContent = new ArrayList<HashMap<String, String>>();
 
@@ -43,7 +43,7 @@ public class ListControl {
         headerAdapter = new SimpleAdapter(context, headerListText, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
         headerList.setAdapter(headerAdapter);       
 
-        updatePictureList();
+        createPictureList();
         
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -55,14 +55,13 @@ public class ListControl {
         });
     }
     
-    public void updatePictureList() {
+    private void createPictureList() {
         XmlParser parser = new XmlParser(context);
         ArrayList<Image> images = parser.getImageData();
         
-        if (images != null) {
-            pictureMap = new HashMap<String, String>();
-            
+        if (images != null) {            
             for (Image image : images) {
+                pictureMap = new HashMap<String, String>();
                 pictureMap.put("filename", image.name);
                 pictureMap.put("date", image.date);
                 pictureListContent.add(pictureMap);                
@@ -73,5 +72,10 @@ public class ListControl {
             pictureAdapter = new SimpleAdapter(context, pictureListContent, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
             pictureList.setAdapter(pictureAdapter);
         }
+    }
+    
+    public void updatePictureList(HashMap<String, String> image) {
+        pictureListContent.add(image);
+        pictureAdapter.notifyDataSetChanged();
     }
 }

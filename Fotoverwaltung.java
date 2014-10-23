@@ -16,11 +16,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Fotoverwaltung extends Activity
 {
-    ListControl listCtrl;
-    LocationClass locationClass;
+    private ListControl listCtrl;
+    private LocationClass locationClass;
+    private XmlParser parser;
     
     /** Called when the activity is first created. */
     @Override
@@ -29,8 +31,11 @@ public class Fotoverwaltung extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
+        parser = new XmlParser(this);
+        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+        
         listCtrl = new ListControl(this, (ListView)findViewById(R.id.headerList), (ListView)findViewById(R.id.pictureList));
-        listCtrl.createPictureList();
+        listCtrl.createList();
     }
 
     @Override
@@ -54,12 +59,10 @@ public class Fotoverwaltung extends Activity
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) {
+        if (requestCode == 1 && resultCode == RESULT_OK) {
             try {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
-                XmlParser parser = new XmlParser(this);
-                locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
                         
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
@@ -72,8 +75,12 @@ public class Fotoverwaltung extends Activity
                     out.close();
                     
                     parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date, "" + locationClass.getCurrentLocation()});
-                                        
-                    listCtrl.updatePictureList();
+                    locationClass.stopOnLocationChanged();
+                    
+                    HashMap<String, String> imageMap = new HashMap<String, String>();
+                    imageMap.put("filename", timeStamp + ".jpeg");
+                    imageMap.put("date", date);
+                    listCtrl.updatePictureList(imageMap);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -82,21 +89,10 @@ public class Fotoverwaltung extends Activity
     }
     
     public void onShootAPictureClick(){
-
-        //hiermit wird das Event onLocationChanged gestartet, sollte sich jemand nach dem Öffnen
-        //der Kamera noch weit bewegen wird dadurch sicher gestellt, dass wir die aktuellste
-        //Location beziehen.
-        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
-
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
 
-        //Testweise:
-        Toast toasty = Toast.makeText(getApplicationContext(), ""+ locationClass.getCurrentLocation(), Toast.LENGTH_LONG);
-        toasty.show();
-        locationClass.stopOnLocationChanged();
-        //Nach dem das Bild gespeichert wurde muss es an die BildClass weiter gegeben werden und dort muss
-        //auch das onLactionChanged Event entfernt/gestoppt werden.
+        locationClass.getCurrentLocation();
     }
     
     public String getTranslation(int id) {
