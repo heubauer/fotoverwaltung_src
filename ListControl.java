@@ -1,6 +1,7 @@
 package com.heubauer.fotoverwaltung;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,10 +22,12 @@ public class ListControl {
     private HashMap<String, String> headerMap, pictureMap;
     private final ListView headerList, pictureList;
     private final Context context;
+    private final Intent imageView;
     
     public ListControl(Context context, ListView headerList, ListView pictureList) {
         headerListText = new ArrayList<HashMap<String, String>>();
         pictureListContent = new ArrayList<HashMap<String, String>>();
+        imageView = new Intent(context, ImageActivity.class);
         
         this.headerList = headerList;
         this.pictureList = pictureList;
@@ -49,8 +52,8 @@ public class ListControl {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
                 
-                Toast toast = Toast.makeText(context, "Ausgewählt: " + entry.get("filename"), Toast.LENGTH_SHORT);
-                toast.show();
+                imageView.putExtra("filename", entry.get("filename"));
+                context.startActivity(imageView);
             }
         });
     }
