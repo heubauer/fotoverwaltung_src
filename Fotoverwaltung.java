@@ -32,6 +32,7 @@ public class Fotoverwaltung extends Activity
         setContentView(R.layout.activity_main);
         
         parser = new XmlParser(this);
+        //wenn wir es schon hier aufrufen weiß ich nicht ob das sinnvoll ist.
         locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
         
         listCtrl = new ListControl(this, (ListView)findViewById(R.id.headerList), (ListView)findViewById(R.id.pictureList));
@@ -69,7 +70,8 @@ public class Fotoverwaltung extends Activity
                     File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpeg");
                     image.getParentFile().mkdirs();
                     FileOutputStream out = new FileOutputStream(image);
-                    
+
+                    //müssen wir compress aufrufen? können wir den outstream nicht anders bekommen?
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
                     out.flush();
                     out.close();
