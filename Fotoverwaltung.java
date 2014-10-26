@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
-import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,7 +71,7 @@ public class Fotoverwaltung extends Activity
                     FileOutputStream out = new FileOutputStream(image);
 
                     //müssen wir compress aufrufen? können wir den outstream nicht anders bekommen?
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
                     out.flush();
                     out.close();
                     
