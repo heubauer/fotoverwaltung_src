@@ -101,6 +101,9 @@ public class ImageActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
+    /**
+     * Teilt das gerade angezeigte Bild
+     */
     private void doShare() {
         if (shareProvider != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
