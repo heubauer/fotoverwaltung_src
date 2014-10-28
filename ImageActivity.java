@@ -18,12 +18,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-
 public class ImageActivity extends Activity {
     private ImageView imageView;
     private String filename;
     private File imageFile;
 
+    /**
+     * Wird aufgerufen, wenn die Activity das erste Mal erstellt wird.
+     * @param savedInstanceState 
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,11 @@ public class ImageActivity extends Activity {
         imageView.setImageBitmap(bitmap);
     }
     
+    /**
+     * Erstellt ein Optionsmenü mit dem Template menu/main.xml
+     * @param menu
+     * @return Boolean Gibt zurück, ob Menü erfolgreich erstellt wurde
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -44,6 +52,11 @@ public class ImageActivity extends Activity {
         return true;
     }
     
+    /**
+     * Führt die KAtion durch, wenn ein Menüeintrag ausgewählt wurde
+     * @param item Ein Menüitem
+     * @return Boolean Gibt das geklickte Item zurück
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -68,7 +81,11 @@ public class ImageActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
     
-    public void exportImage() throws IOException {
+    /**
+     * Exportiert das Bild in der Activity in den öffentlichen Ordner DCIM
+     * @throws IOException 
+     */
+    private void exportImage() throws IOException {
         FileChannel in = new FileInputStream(imageFile.getAbsolutePath()).getChannel();
         
         File publicDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Fotoverwaltung");

@@ -18,10 +18,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-/**
- *
- * @author Marco
- */
 class Image {
     public String name;
     public String date;
@@ -33,6 +29,10 @@ public class XmlParser {
     private final Context context;
     private final File xmlFile;
     
+    /**
+     * Erstellt einen XML-Parser um mit der imageData.xml zu interagieren
+     * @param context Context in dem der Parser aufgerufen wird
+     */
     public XmlParser(Context context) {
         images = null;
         xmlFile = new File(context.getFilesDir(), "imageData.xml");
@@ -69,6 +69,12 @@ public class XmlParser {
         }
     }
     
+    /**
+     * Parst die XML-Datei in ein Array mit Objekten des Typs Image
+     * @param parser XMLPullParser, der verwendet werden soll 
+     * @throws XmlPullParserException
+     * @throws IOException 
+     */
     private void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException {
         int eventType = parser.getEventType();
         Image currentImg = null;
@@ -104,13 +110,18 @@ public class XmlParser {
     }
     
     /**
-     * returns images in XML-file
+     * Gibt die in der XML-Datei gespeicherten Bilder zurück
      * @return ArrayList<Image>
      */
     public ArrayList<Image> getImageData() {
         return images;
     }
     
+    /**
+     * Parst die Bilddaten in ein XML. Benötigt werden Dateiname, Datum und Geodaten
+     * @param imgData Ein String-Array mit den Bilddaten
+     * @throws RuntimeException
+     */
     public void writeXml(String[] imgData){
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
@@ -136,6 +147,11 @@ public class XmlParser {
         } 
     }
     
+    /**
+     * Schreibt einen XML-String in die XML-Datei
+     * @param xmlString String, der eingetragen werden soll in die Datei
+     * @throws IOException 
+     */
     private void writeXmlToFile (String xmlString) throws IOException{     
         FileWriter fstream = new FileWriter(xmlFile.getAbsolutePath(), true);
         BufferedWriter out = new BufferedWriter(fstream);

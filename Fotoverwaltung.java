@@ -23,7 +23,10 @@ public class Fotoverwaltung extends Activity
     private LocationClass locationClass;
     private XmlParser parser;
     
-    /** Called when the activity is first created. */
+    /**
+     * Wird aufgerufen, wenn die Activity das erste Mal erstellt wird.
+     * @param savedInstanceState 
+     */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -37,6 +40,11 @@ public class Fotoverwaltung extends Activity
         listCtrl.createList();
     }
 
+    /**
+     * Erstellt ein Optionsmenü mit dem Template menu/main.xml
+     * @param menu
+     * @return Boolean Gibt zurück, ob Menü erfolgreich erstellt wurde
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -44,11 +52,13 @@ public class Fotoverwaltung extends Activity
         return true;
     }
     
+    /**
+     * Führt die KAtion durch, wenn ein Menüeintrag ausgewählt wurde
+     * @param item Ein Menüitem
+     * @return Boolean Gibt das geklickte Item zurück
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.Camera) {
             onShootAPictureClick();
@@ -56,6 +66,12 @@ public class Fotoverwaltung extends Activity
         return super.onOptionsItemSelected(item);
     }
     
+    /**
+     * Handelt die Rückgabeparameter von fremden Activities (in diesem Falle nur von der Camera)
+     * @param requestCode Code der Activity, die diese Funktion aufruft
+     * @param resultCode Code, der einen Status enthält
+     * @param data Daten die zurückgegeben werden von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -87,14 +103,13 @@ public class Fotoverwaltung extends Activity
         }
     }
     
+    /**
+     * Aktion, die ausgeführt wird, wenn "Take a picture" ausgewählt wird
+     */
     public void onShootAPictureClick(){
         CamClass cam = new CamClass();
         startActivityForResult(cam.startCam(), 1);
 
         locationClass.getCurrentLocation();
-    }
-    
-    public String getTranslation(int id) {
-        return getString(id);
     }
 }

@@ -5,9 +5,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-/**
- * Created by Edwin on 22.10.2014.
- */
 public class LocationClass {
 
     private LocationManager locationManager;
