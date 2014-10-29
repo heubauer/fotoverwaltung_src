@@ -5,6 +5,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by Edwin on 22.10.2014.
  */
@@ -12,7 +14,7 @@ public class LocationClass {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
-    private Location currentLocation;
+    private LatLng currentLocation;
 
     public LocationClass(LocationManager locationManager){
 
@@ -22,7 +24,7 @@ public class LocationClass {
             @Override
             public void onLocationChanged(Location location) {
 
-                currentLocation = location;
+                currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
 
             }
 
@@ -46,10 +48,14 @@ public class LocationClass {
 
     }
 
-    public Location getCurrentLocation(){
+    public LatLng getCurrentLocation(){
 
         if (currentLocation == null){
-            currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            LatLng latlng = new LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(),
+                    locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
+
+            currentLocation = latlng;
         }
         return currentLocation;
     }
@@ -57,9 +63,4 @@ public class LocationClass {
     public void stopOnLocationChanged(){
         locationManager.removeUpdates(locationListener);
     }
-
-    public void showLoactionOnMap(Location location){
-
-    }
-
 }

@@ -1,13 +1,10 @@
 package com.heubauer.fotoverwaltung;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.Xml;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +26,10 @@ class Image {
 }
 
 public class XmlParser {
+
     private ArrayList<Image> images;
+
+    //context wird ausserhalb von XmlParser nicht gebraucht also warum?
     private final Context context;
     private final File xmlFile;
     

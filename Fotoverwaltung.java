@@ -3,7 +3,6 @@ package com.heubauer.fotoverwaltung;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -31,10 +30,13 @@ public class Fotoverwaltung extends Activity
         setContentView(R.layout.activity_main);
         
         parser = new XmlParser(this);
-        //wenn wir es schon hier aufrufen weiß ich nicht ob das sinnvoll ist.
-        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+
+        //wenn wir es schon hier aufrufen weiß ich nicht ob das sinnvoll ist. Habe es deswegen
+        // jetzt mal auskommentiert.
+        //locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
         
-        listCtrl = new ListControl(this, (ListView)findViewById(R.id.headerList), (ListView)findViewById(R.id.pictureList));
+        listCtrl = new ListControl(this, (ListView)findViewById(R.id.headerList),
+                (ListView)findViewById(R.id.pictureList));
         listCtrl.createList();
     }
 
@@ -56,28 +58,42 @@ public class Fotoverwaltung extends Activity
         }
         return super.onOptionsItemSelected(item);
     }
-    
+
+    public void onShootAPictureClick(){
+        CamClass cam = new CamClass();
+
+        //wird gestartet damit wir eventuell onLocationChanged mitbekommen.
+        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+
+        startActivityForResult(cam.startCam(), 1);
+
+        locationClass.getCurrentLocation();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             try {
+                //for filename
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                //for date in Hashmap
                 String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
-                        
+
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
                     File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpeg");
                     image.getParentFile().mkdirs();
                     FileOutputStream out = new FileOutputStream(image);
 
-                    //müssen wir compress aufrufen? können wir den outstream nicht anders bekommen?
+                    //müssen wir compress aufrufen?
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
                     out.flush();
                     out.close();
-                    
-                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date, "" + locationClass.getCurrentLocation()});
+
+                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date,
+                            "" + locationClass.getCurrentLocation()});
                     locationClass.stopOnLocationChanged();
-                    
+
                     HashMap<String, String> imageMap = new HashMap<String, String>();
                     imageMap.put("filename", timeStamp + ".jpeg");
                     imageMap.put("date", date);
@@ -87,13 +103,6 @@ public class Fotoverwaltung extends Activity
                 e.printStackTrace();
             }
         }
-    }
-    
-    public void onShootAPictureClick(){
-        CamClass cam = new CamClass();
-        startActivityForResult(cam.startCam(), 1);
-
-        locationClass.getCurrentLocation();
     }
     
     public String getTranslation(int id) {

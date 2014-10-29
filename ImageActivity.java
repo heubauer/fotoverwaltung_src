@@ -2,6 +2,7 @@ package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -12,6 +13,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,6 +27,7 @@ public class ImageActivity extends Activity {
     private ImageView imageView;
     private String filename;
     private File imageFile;
+    private String latLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,8 @@ public class ImageActivity extends Activity {
         setContentView(R.layout.activity_image);
         
         filename = getIntent().getStringExtra("filename");
-        
+        latLng = getIntent().getStringExtra("location");
+
         imageView = (ImageView)findViewById(R.id.imageView);
         imageFile = new File(getFilesDir() + "/Fotos", filename);
         Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -59,9 +65,12 @@ public class ImageActivity extends Activity {
                     e.printStackTrace();
                 }
                 break;
-            case R.id.Share:
             case R.id.Map:
-
+                Intent maps = new Intent(this, MapsActivity.class);
+                maps.putExtra("location", latLng);
+                startActivity(maps);
+                break;
+            case R.id.Share:
             default:
                 Toast toast = Toast.makeText(getApplicationContext(), "Function not implemented (yet)", Toast.LENGTH_SHORT);
                 toast.show();
