@@ -22,7 +22,10 @@ public class Fotoverwaltung extends Activity
     private LocationClass locationClass;
     private XmlParser parser;
     
-    /** Called when the activity is first created. */
+    /**
+     * Wird aufgerufen, wenn die Activity das erste Mal erstellt wird.
+     * @param savedInstanceState 
+     */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -40,6 +43,11 @@ public class Fotoverwaltung extends Activity
         listCtrl.createList();
     }
 
+    /**
+     * Erstellt ein Optionsmenü mit dem Template menu/main.xml
+     * @param menu
+     * @return Boolean Gibt zurück, ob Menü erfolgreich erstellt wurde
+     */
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -47,29 +55,26 @@ public class Fotoverwaltung extends Activity
         return true;
     }
     
+    /**
+     * Führt die Aktion durch, wenn ein Menüeintrag ausgewählt wurde
+     * @param item Ein Menüitem
+     * @return Boolean Gibt das geklickte Item zurück
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.Camera) {
             onShootAPictureClick();
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public void onShootAPictureClick(){
-        CamClass cam = new CamClass();
-
-        //wird gestartet damit wir eventuell onLocationChanged mitbekommen.
-        locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
-
-        startActivityForResult(cam.startCam(), 1);
-
-        locationClass.getCurrentLocation();
-    }
-
+    
+    /**
+     * Handelt die Rückgabeparameter von fremden Activities (in diesem Falle nur von der Camera)
+     * @param requestCode Code der Activity, die diese Funktion aufruft
+     * @param resultCode Code, der einen Status enthält
+     * @param data Daten die zurückgegeben werden von der Activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1 && resultCode == RESULT_OK) {
@@ -78,6 +83,8 @@ public class Fotoverwaltung extends Activity
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 //for date in Hashmap
                 String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
+
+                String location = locationClass.getCurrentLocation().toString();
 
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
@@ -91,12 +98,13 @@ public class Fotoverwaltung extends Activity
                     out.close();
 
                     parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date,
-                            "" + locationClass.getCurrentLocation()});
+                            location});
                     locationClass.stopOnLocationChanged();
 
                     HashMap<String, String> imageMap = new HashMap<String, String>();
                     imageMap.put("filename", timeStamp + ".jpeg");
                     imageMap.put("date", date);
+                    imageMap.put("geoData", location);
                     listCtrl.updatePictureList(imageMap);
                 }
             } catch (IOException e) {
@@ -104,8 +112,20 @@ public class Fotoverwaltung extends Activity
             }
         }
     }
-    
-    public String getTranslation(int id) {
-        return getString(id);
+
+    /**
+     * Aktion, die ausgeführt wird, wenn "Take a picture" ausgewählt wird
+     */
+    public void onShootAPictureClick(){
+        CamClass cam = new CamClass();
+
+        if (locationClass == null) {
+            locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
+        }
+        else{
+            locationClass.startOnLocationChanged();
+        }
+
+        startActivityForResult(cam.startCam(), 1);
     }
 }

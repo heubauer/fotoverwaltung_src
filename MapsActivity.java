@@ -1,11 +1,8 @@
 package com.heubauer.fotoverwaltung;
 
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,12 +19,13 @@ public class MapsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        setUpMapIfNeeded();
 
-        String[] geo = getIntent().getStringExtra("location").split(",");
-        double lat = Double.parseDouble(geo[0]);
-        double lng = Double.parseDouble(geo[1]);
+        String[] geo = getIntent().getStringExtra("geoData").split("[(,)]");
+        double lat = Double.parseDouble(geo[1]);
+        double lng = Double.parseDouble(geo[2]);
         location = new LatLng(lat, lng);
+
+        setUpMapIfNeeded();
     }
 
     @Override
@@ -64,12 +62,6 @@ public class MapsActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
     private void setUpMap() {
 
         mMap.addMarker(new MarkerOptions().position(location).title("Marker"));

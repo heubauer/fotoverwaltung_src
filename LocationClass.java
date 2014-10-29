@@ -7,9 +7,6 @@ import android.os.Bundle;
 
 import com.google.android.gms.maps.model.LatLng;
 
-/**
- * Created by Edwin on 22.10.2014.
- */
 public class LocationClass {
 
     private LocationManager locationManager;
@@ -23,27 +20,21 @@ public class LocationClass {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
                 currentLocation = new LatLng(location.getLatitude(),location.getLongitude());
-
             }
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
             }
 
             @Override
             public void onProviderEnabled(String provider) {
-
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
             }
         };
-
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
     }
@@ -62,5 +53,9 @@ public class LocationClass {
 
     public void stopOnLocationChanged(){
         locationManager.removeUpdates(locationListener);
+    }
+
+    public void startOnLocationChanged(){
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
     }
 }

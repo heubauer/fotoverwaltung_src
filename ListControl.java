@@ -28,6 +28,12 @@ public class ListControl {
     private final Context context;
     private final Intent imageView;
     
+    /**
+     * Der Listkontroller wird verwendet um eine Liste zu erstellen
+     * @param context Der Context in dem die Liste aufgerufen wird
+     * @param headerList Die ListView in der der Header erstellt wird
+     * @param pictureList Die ListView in der die Bilderliste erstelt wird
+     */
     public ListControl(Context context, ListView headerList, ListView pictureList) {
         //why two times? in createList
         headerListText = new ArrayList<HashMap<String, String>>();
@@ -39,6 +45,9 @@ public class ListControl {
         this.context = context;
     }
     
+    /**
+     * Erstellt die Header- und Imageliste in der Hauptactivity
+     */
     public void createList(){
         //why again?
         headerListText = new ArrayList<HashMap<String, String>>();
@@ -59,12 +68,15 @@ public class ListControl {
                 HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
                 
                 imageView.putExtra("filename", entry.get("filename"));
-                imageView.putExtra("location", entry.get("geoData"));
+                imageView.putExtra("geoData", entry.get("geoData"));
                 context.startActivity(imageView);
             }
         });
     }
     
+    /**
+     * Bestückt die Bilderliste mit Inhalt
+     */
     private void createPictureList() {
         XmlParser parser = new XmlParser(context);
         ArrayList<Image> images = parser.getImageData();
@@ -85,6 +97,10 @@ public class ListControl {
         }
     }
     
+    /**
+     * Fügt ein neu geschossenes Bild der Bilderliste hinzu
+     * @param image Das Bild, dass eingetragen werden soll
+     */
     public void updatePictureList(HashMap<String, String> image) {
         pictureListContent.add(image);
         pictureAdapter.notifyDataSetChanged();
