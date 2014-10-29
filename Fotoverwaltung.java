@@ -111,6 +111,9 @@ public class Fotoverwaltung extends Activity
                 e.printStackTrace();
             }
         }
+        else{
+            locationClass.stopOnLocationChanged();
+        }
     }
 
     /**
