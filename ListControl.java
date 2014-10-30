@@ -7,11 +7,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,6 +26,7 @@ public class ListControl {
     private final ListView headerList, pictureList;
     private final Context context;
     private final Intent imageView;
+    private XmlParser parser;
     
     /**
      * Der Listkontroller wird verwendet um eine Liste zu erstellen
@@ -34,10 +34,12 @@ public class ListControl {
      * @param headerList Die ListView in der der Header erstellt wird
      * @param pictureList Die ListView in der die Bilderliste erstelt wird
      */
-    public ListControl(Context context, ListView headerList, ListView pictureList) {
+    public ListControl(Context context, ListView headerList, ListView pictureList, XmlParser parser) {
         //why two times? in createList
         headerListText = new ArrayList<HashMap<String, String>>();
         pictureListContent = new ArrayList<HashMap<String, String>>();
+
+        this.parser = parser;
 
         imageView = new Intent(context, ImageActivity.class);
         this.headerList = headerList;
@@ -48,7 +50,7 @@ public class ListControl {
     /**
      * Erstellt die Header- und Imageliste in der Hauptactivity
      */
-    public void createList(){
+    public void createList() {
         //why again?
         headerListText = new ArrayList<HashMap<String, String>>();
         pictureListContent = new ArrayList<HashMap<String, String>>();
@@ -61,7 +63,8 @@ public class ListControl {
         headerAdapter = new SimpleAdapter(context, headerListText, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
         headerList.setAdapter(headerAdapter);       
 
-        createPictureList();
+        try {createPictureList();}catch(Exception e){e.printStackTrace();}
+
         
         pictureList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -77,21 +80,22 @@ public class ListControl {
     /**
      * Bestückt die Bilderliste mit Inhalt
      */
-    private void createPictureList() {
-        XmlParser parser = new XmlParser(context);
+    private void createPictureList(){
+        //XmlParser parser = new XmlParser(context);
+        try {parser.parseXML();}catch(Exception e){e.printStackTrace();}
         ArrayList<Image> images = parser.getImageData();
-        
-        if (images != null) {            
+
+        if (images != null) {
             for (Image image : images) {
                 pictureMap = new HashMap<String, String>();
                 pictureMap.put("filename", image.name);
                 pictureMap.put("date", image.date);
                 pictureMap.put("geoData", image.geoData);
-                pictureListContent.add(pictureMap);                
-                
+                pictureListContent.add(pictureMap);
+
                 Log.i("Files", "Dateiname: " + image.name);
             }
-            
+
             pictureAdapter = new SimpleAdapter(context, pictureListContent, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
             pictureList.setAdapter(pictureAdapter);
         }

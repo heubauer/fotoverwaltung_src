@@ -47,6 +47,7 @@ public class ImageActivity extends Activity {
 
         latLng = getIntent().getStringExtra("geoData");
         parser = new XmlParser(this);
+        try{parser.parseXML();}catch(Exception e){e.printStackTrace();}
         for(Image img : parser.getImageData()) {
             if(img.name.equals(getIntent().getStringExtra("filename")))
                 curImage = img;                
@@ -97,6 +98,8 @@ public class ImageActivity extends Activity {
             case R.id.Share:
                 doShare();
                 break;
+            case 4: //Alle Teilen abfangen.
+                break;
             case R.id.Map:
                 Intent maps = new Intent(this, MapsActivity.class);
                 maps.putExtra("geoData", latLng);
@@ -134,7 +137,6 @@ public class ImageActivity extends Activity {
      */
     private void exportImage(boolean toExternal) throws IOException {
         FileChannel in = new FileInputStream(imageFile.getAbsolutePath()).getChannel();
-        
         File newImage = null;
         if (toExternal) {
             File publicDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Fotoverwaltung");
