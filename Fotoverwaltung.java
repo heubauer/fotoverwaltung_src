@@ -97,8 +97,7 @@ public class Fotoverwaltung extends Activity
                     out.flush();
                     out.close();
 
-                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date,
-                            location});
+                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date, location});
                     locationClass.stopOnLocationChanged();
 
                     HashMap<String, String> imageMap = new HashMap<String, String>();
