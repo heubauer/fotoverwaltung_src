@@ -1,6 +1,7 @@
 package com.heubauer.fotoverwaltung;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.Xml;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,19 +22,20 @@ class Image {
     public String geoData;
 }
 
-public class XmlParser {
+public class XmlParser{
 
     private ArrayList<Image> images;
 
     //context wird ausserhalb von XmlParser nicht gebraucht also warum?
     //private final Context context;
     private final File xmlFile;
+    private XmlPullParser parser;
     
     /**
      * Erstellt einen XML-Parser um mit der imageData.xml zu interagieren
      * @param context Context in dem der Parser aufgerufen wird
      */
-    public XmlParser(Context context) {
+    public XmlParser(Context context)  {
         images = null;
         xmlFile = new File(context.getFilesDir(), "imageData.xml");
         //this.context = context;
@@ -41,7 +43,7 @@ public class XmlParser {
         XmlPullParserFactory pullParserFactory;
         try {
             pullParserFactory = XmlPullParserFactory.newInstance();
-            XmlPullParser parser = pullParserFactory.newPullParser();
+            parser = pullParserFactory.newPullParser();
             
             if(!xmlFile.exists()) {                
                 xmlFile.createNewFile();
@@ -60,7 +62,7 @@ public class XmlParser {
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in_s, null);
 
-            parseXML(parser);
+            //parseXML(parser);
 
         } catch (XmlPullParserException e) {
             e.printStackTrace();
@@ -71,11 +73,10 @@ public class XmlParser {
     
     /**
      * Parst die XML-Datei in ein Array mit Objekten des Typs Image
-     * @param parser XMLPullParser, der verwendet werden soll 
      * @throws XmlPullParserException
      * @throws IOException 
      */
-    private void parseXML(XmlPullParser parser) throws XmlPullParserException,IOException {
+    public void parseXML() throws XmlPullParserException,IOException {
         int eventType = parser.getEventType();
         Image currentImg = null;
 

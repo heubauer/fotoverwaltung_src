@@ -27,8 +27,7 @@ public class Fotoverwaltung extends Activity
      * @param savedInstanceState 
      */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
@@ -39,7 +38,7 @@ public class Fotoverwaltung extends Activity
         //locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
         
         listCtrl = new ListControl(this, (ListView)findViewById(R.id.headerList),
-                (ListView)findViewById(R.id.pictureList));
+                (ListView)findViewById(R.id.pictureList), parser);
         listCtrl.createList();
     }
 
@@ -84,24 +83,22 @@ public class Fotoverwaltung extends Activity
                 //for date in Hashmap
                 String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
 
-                String location = locationClass.getCurrentLocation().toString();
-
                 Bitmap bitmap = (Bitmap) data.getExtras().get("data");
                 if (bitmap != null) {
-                    File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpeg");
+                    File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpg");
                     image.getParentFile().mkdirs();
                     FileOutputStream out = new FileOutputStream(image);
 
-                    //müssen wir compress aufrufen?
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                     out.flush();
                     out.close();
-
-                    parser.writeXml(new String[]{timeStamp + ".jpeg", "" + date, location});
+                    String location = locationClass.getCurrentLocation().toString();
+                    parser.writeXml(new String[]{timeStamp + ".jpg", "" + date,
+                            location});
                     locationClass.stopOnLocationChanged();
 
                     HashMap<String, String> imageMap = new HashMap<String, String>();
-                    imageMap.put("filename", timeStamp + ".jpeg");
+                    imageMap.put("filename", timeStamp + ".jpg");
                     imageMap.put("date", date);
                     imageMap.put("geoData", location);
                     listCtrl.updatePictureList(imageMap);
@@ -127,7 +124,7 @@ public class Fotoverwaltung extends Activity
         else{
             locationClass.startOnLocationChanged();
         }
-
         startActivityForResult(cam.startCam(), 1);
+        //http://developer.android.com/training/camera/photobasics.html -> Save the Full-size Photo
     }
 }
