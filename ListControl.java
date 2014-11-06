@@ -7,10 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -88,12 +84,12 @@ public class ListControl {
         if (images != null) {
             for (Image image : images) {
                 pictureMap = new HashMap<String, String>();
-                pictureMap.put("filename", image.name);
-                pictureMap.put("date", image.date);
-                pictureMap.put("geoData", image.geoData);
+                pictureMap.put("filename", image.getName());
+                pictureMap.put("date", image.getDate());
+                pictureMap.put("geoData", image.getGeoData());
                 pictureListContent.add(pictureMap);
 
-                Log.i("Files", "Dateiname: " + image.name);
+                Log.i("Files", "Dateiname: " + image.getName());
             }
 
             pictureAdapter = new SimpleAdapter(context, pictureListContent, R.layout.row, new String[]{"filename", "date"}, new int[]{R.id.filename, R.id.date});
@@ -105,8 +101,13 @@ public class ListControl {
      * Fügt ein neu geschossenes Bild der Bilderliste hinzu
      * @param image Das Bild, dass eingetragen werden soll
      */
-    public void updatePictureList(HashMap<String, String> image) {
-        pictureListContent.add(image);
+    public void updatePictureList(Image image) {
+        HashMap<String, String> imageMap = new HashMap<String, String>();
+        imageMap.put("filename", image.getName());
+        imageMap.put("date", image.getDate());
+        imageMap.put("geoData", image.getGeoData());
+        
+        pictureListContent.add(imageMap);
         pictureAdapter.notifyDataSetChanged();
     }
 }

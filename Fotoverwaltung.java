@@ -2,25 +2,25 @@ package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 
 public class Fotoverwaltung extends Activity
 {
+    static final int REQUEST_TAKE_PHOTO = 1;
+
     private ListControl listCtrl;
     private LocationClass locationClass;
     private XmlParser parser;
+    private Image curImage;
     
     /**
      * Wird aufgerufen, wenn die Activity das erste Mal erstellt wird.
@@ -70,46 +70,21 @@ public class Fotoverwaltung extends Activity
     
     /**
      * Handelt die Rückgabeparameter von fremden Activities (in diesem Falle nur von der Camera)
+     * Speichert die Location in der XML und fügt das Bild der XML-Datei hinzu, um es dann anshließend
+     * in der Übersicht anzuzeigen.
      * @param requestCode Code der Activity, die diese Funktion aufruft
      * @param resultCode Code, der einen Status enthält
      * @param data Daten die zurückgegeben werden von der Activity
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            try {
-                //for filename
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                //for date in Hashmap
-                String date = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date());
-
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                if (bitmap != null) {
-                    File image = new File(getFilesDir() + "/Fotos", timeStamp + ".jpg");
-                    image.getParentFile().mkdirs();
-                    FileOutputStream out = new FileOutputStream(image);
-
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                    out.flush();
-                    out.close();
-                    String location = locationClass.getCurrentLocation().toString();
-                    parser.writeXml(new String[]{timeStamp + ".jpg", "" + date,
-                            location});
-                    locationClass.stopOnLocationChanged();
-
-                    HashMap<String, String> imageMap = new HashMap<String, String>();
-                    imageMap.put("filename", timeStamp + ".jpg");
-                    imageMap.put("date", date);
-                    imageMap.put("geoData", location);
-                    listCtrl.updatePictureList(imageMap);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+                try {curImage.exportImage("private");} catch(IOException e){e.printStackTrace();}
+                curImage.setGeoData(locationClass.getCurrentLocation().toString());
+                parser.writeXml(curImage);
+                listCtrl.updatePictureList(curImage);
         }
-        else{
-            locationClass.stopOnLocationChanged();
-        }
+        locationClass.stopOnLocationChanged();
     }
 
     /**
@@ -124,7 +99,21 @@ public class Fotoverwaltung extends Activity
         else{
             locationClass.startOnLocationChanged();
         }
-        startActivityForResult(cam.startCam(), 1);
-        //http://developer.android.com/training/camera/photobasics.html -> Save the Full-size Photo
+        
+        Intent takePictureIntent = cam.startCam();
+        curImage = new Image(this);
+        
+        File photoFile = null;
+        try {
+            photoFile = curImage.createImageFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Continue only if the File was successfully created
+        if (photoFile != null) {
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                    Uri.fromFile(photoFile));
+            startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+        }
     }
 }

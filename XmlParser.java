@@ -1,7 +1,6 @@
 package com.heubauer.fotoverwaltung;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.util.Xml;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,12 +15,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 import org.xmlpull.v1.XmlSerializer;
 
-class Image {
-    public String name;
-    public String date;
-    public String geoData;
-}
-
 public class XmlParser{
 
     private ArrayList<Image> images;
@@ -29,6 +22,7 @@ public class XmlParser{
     //context wird ausserhalb von XmlParser nicht gebraucht also warum?
     //private final Context context;
     private final File xmlFile;
+    private final Context context;
     private XmlPullParser parser;
     
     /**
@@ -38,7 +32,7 @@ public class XmlParser{
     public XmlParser(Context context)  {
         images = null;
         xmlFile = new File(context.getFilesDir(), "imageData.xml");
-        //this.context = context;
+        this.context = context;
         
         XmlPullParserFactory pullParserFactory;
         try {
@@ -78,7 +72,7 @@ public class XmlParser{
      */
     public void parseXML() throws XmlPullParserException,IOException {
         int eventType = parser.getEventType();
-        Image currentImg = null;
+        Image currentImg = new Image(context);
 
         while (eventType != XmlPullParser.END_DOCUMENT){
             String name;
@@ -89,14 +83,14 @@ public class XmlParser{
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
                     if ("image".equals(name)){
-                        currentImg = new Image();
+                        currentImg = new Image(context);
                     } else if (currentImg != null){
                         if ("filename".equals(name)){
-                            currentImg.name = parser.nextText();
+                            currentImg.setName(parser.nextText());
                         } else if ("date".equals(name)){
-                            currentImg.date = parser.nextText();
+                            currentImg.setDate(parser.nextText());
                         } else if ("geoData".equals(name)){
-                            currentImg.geoData= parser.nextText();
+                            currentImg.setGeoData(parser.nextText());
                         }  
                     }
                     break;
@@ -123,7 +117,7 @@ public class XmlParser{
      * @param imgData Ein String-Array mit den Bilddaten
      * @throws RuntimeException
      */
-    public void writeXml(String[] imgData){
+    public void writeXml(Image imgData){
         XmlSerializer serializer = Xml.newSerializer();
         StringWriter writer = new StringWriter();
         try {
@@ -131,13 +125,13 @@ public class XmlParser{
             serializer.startTag("", "image");
             
             serializer.startTag("", "filename");
-            serializer.text(imgData[0]);
+            serializer.text(imgData.getName());
             serializer.endTag("", "filename");
             serializer.startTag("", "date");
-            serializer.text(imgData[1]);
+            serializer.text(imgData.getDate());
             serializer.endTag("", "date");
             serializer.startTag("", "geoData");
-            serializer.text(imgData[2]);
+            serializer.text(imgData.getGeoData());
             serializer.endTag("", "geoData");
             
             serializer.endTag("", "image");

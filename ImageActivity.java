@@ -1,7 +1,6 @@
 package com.heubauer.fotoverwaltung;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,16 +15,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 
 public class ImageActivity extends Activity {
     private ImageView imageView;
@@ -49,11 +39,11 @@ public class ImageActivity extends Activity {
         parser = new XmlParser(this);
         try{parser.parseXML();}catch(Exception e){e.printStackTrace();}
         for(Image img : parser.getImageData()) {
-            if(img.name.equals(getIntent().getStringExtra("filename")))
+            if(img.getName().equals(getIntent().getStringExtra("filename")))
                 curImage = img;                
         }
         imageView = (ImageView)findViewById(R.id.imageView);
-        imageFile = new File(getFilesDir() + "/Fotos", curImage.name);
+        imageFile = new File(getFilesDir() + "/Fotos", curImage.getName());
         Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
         imageView.setImageBitmap(bitmap);
     }
@@ -90,7 +80,7 @@ public class ImageActivity extends Activity {
         switch(id) {
             case R.id.Export:
                 try {
-                    exportImage(true);
+                    curImage.exportImage("galerie");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -113,6 +103,16 @@ public class ImageActivity extends Activity {
     }
     
     /**
+     * Löscht das Bild wieder aus der ImageView, wenn sie nicht mehr angezeigt wird um den Speicher zu schonen
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        imageView.setImageDrawable(null);
+    }
+    
+    /**
      * Teilt das gerade angezeigte Bild
      */
     private void doShare() {
@@ -128,36 +128,6 @@ public class ImageActivity extends Activity {
             Uri uri = Uri.parse(path);
             shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
             shareProvider.setShareIntent(shareIntent);
-        }
-    }
-    
-    /**
-     * Exportiert das Bild in der Activity in den öffentlichen Ordner DCIM
-     * @throws IOException 
-     */
-    private void exportImage(boolean toExternal) throws IOException {
-        FileChannel in = new FileInputStream(imageFile.getAbsolutePath()).getChannel();
-        File newImage = null;
-        if (toExternal) {
-            File publicDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Fotoverwaltung");
-            if (! publicDir.exists())
-                publicDir.mkdirs();
-            newImage = new File(publicDir, curImage.name);
-        } else {
-             newImage = File.createTempFile("fotoverwaltung", curImage.name, getExternalCacheDir());
-        }
-        
-        FileChannel out = new FileOutputStream(newImage.getAbsolutePath()).getChannel();
-        try
-        {
-            in.transferTo(0, in.size(), out);
-        }
-        finally
-        {
-            if (in != null)
-                in.close();
-            if (out != null)
-                out.close();
         }
     }
 }
