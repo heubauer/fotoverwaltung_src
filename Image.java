@@ -49,6 +49,7 @@ public class Image {
      * @throws IOException 
      */
     public void exportImage(String to) throws IOException {
+        curPath = (curPath != null)? curPath : context.getFilesDir() + "Fotos/" + name;
         FileChannel in = new FileInputStream(curPath).getChannel();
         File oldImage = new File(curPath);
         File newImage = null;
@@ -57,10 +58,10 @@ public class Image {
             if (! publicDir.exists())
                 publicDir.mkdirs();
             newImage = new File(publicDir, name);
-        } else if("public".equalsIgnoreCase(to)) {
-            newImage = File.createTempFile("fotoverwaltung", name, context.getExternalCacheDir());
+//        } else if("public".equalsIgnoreCase(to)) {
+//            newImage = File.createTempFile("fotoverwaltung", name, context.getExternalCacheDir());
         } else if("private".equalsIgnoreCase(to)){
-            File privateDir = new File(context.getFilesDir() + "/Fotos");
+            File privateDir = new File(context.getFilesDir() + "Fotos/");
             if (! privateDir.exists())
                 privateDir.mkdirs();
             newImage = new File(privateDir, name);

@@ -79,7 +79,9 @@ public class Fotoverwaltung extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-                try {curImage.exportImage("private");} catch(IOException e){e.printStackTrace();}
+                try {curImage.exportImage("private");}
+                catch(IOException e){e.printStackTrace();}
+                
                 curImage.setGeoData(locationClass.getCurrentLocation().toString());
                 parser.writeXml(curImage);
                 listCtrl.updatePictureList(curImage);
@@ -91,8 +93,6 @@ public class Fotoverwaltung extends Activity
      * Aktion, die ausgeführt wird, wenn "Take a picture" ausgewählt wird
      */
     public void onShootAPictureClick(){
-        CamClass cam = new CamClass();
-
         if (locationClass == null) {
             locationClass = new LocationClass((LocationManager)getSystemService(LOCATION_SERVICE));
         }
@@ -100,7 +100,7 @@ public class Fotoverwaltung extends Activity
             locationClass.startOnLocationChanged();
         }
         
-        Intent takePictureIntent = cam.startCam();
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         curImage = new Image(this);
         
         File photoFile = null;

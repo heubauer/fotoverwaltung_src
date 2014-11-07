@@ -9,8 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class LocationClass {
 
-    private LocationManager locationManager;
-    private LocationListener locationListener;
+    private final LocationManager locationManager;
+    private final LocationListener locationListener;
     private LatLng currentLocation;
 
     public LocationClass(LocationManager locationManager){
@@ -42,10 +42,11 @@ public class LocationClass {
     public LatLng getCurrentLocation(){
 
         if (currentLocation == null){
-
-            LatLng latlng = new LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(),
+            LatLng latlng = new LatLng(0, 0);
+            if(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) != null) {
+                latlng = new LatLng(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude(),
                     locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude());
-
+            }
             currentLocation = latlng;
         }
         return currentLocation;

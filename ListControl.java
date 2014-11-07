@@ -22,13 +22,14 @@ public class ListControl {
     private final ListView headerList, pictureList;
     private final Context context;
     private final Intent imageView;
-    private XmlParser parser;
+    private final XmlParser parser;
     
     /**
      * Der Listkontroller wird verwendet um eine Liste zu erstellen
      * @param context Der Context in dem die Liste aufgerufen wird
      * @param headerList Die ListView in der der Header erstellt wird
      * @param pictureList Die ListView in der die Bilderliste erstelt wird
+     * @param parser Der Parser, der für die Bild-XML genutzt wird
      */
     public ListControl(Context context, ListView headerList, ListView pictureList, XmlParser parser) {
         //why two times? in createList
@@ -47,7 +48,6 @@ public class ListControl {
      * Erstellt die Header- und Imageliste in der Hauptactivity
      */
     public void createList() {
-        //why again?
         headerListText = new ArrayList<HashMap<String, String>>();
         pictureListContent = new ArrayList<HashMap<String, String>>();
 
@@ -67,7 +67,6 @@ public class ListControl {
                 HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
                 
                 imageView.putExtra("filename", entry.get("filename"));
-                imageView.putExtra("geoData", entry.get("geoData"));
                 context.startActivity(imageView);
             }
         });
@@ -78,7 +77,9 @@ public class ListControl {
      */
     private void createPictureList(){
         //XmlParser parser = new XmlParser(context);
-        try {parser.parseXML();}catch(Exception e){e.printStackTrace();}
+        try {parser.parseXML();}
+        catch(Exception e){e.printStackTrace();}
+        
         ArrayList<Image> images = parser.getImageData();
 
         if (images != null) {

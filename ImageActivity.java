@@ -35,13 +35,14 @@ public class ImageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        latLng = getIntent().getStringExtra("geoData");
         parser = new XmlParser(this);
         try{parser.parseXML();}catch(Exception e){e.printStackTrace();}
         for(Image img : parser.getImageData()) {
             if(img.getName().equals(getIntent().getStringExtra("filename")))
                 curImage = img;                
         }
+        
+        latLng = curImage.getGeoData();
         imageView = (ImageView)findViewById(R.id.imageView);
         imageFile = new File(getFilesDir() + "/Fotos", curImage.getName());
         Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
