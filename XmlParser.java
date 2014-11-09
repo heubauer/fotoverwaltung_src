@@ -156,4 +156,8 @@ public class XmlParser{
 
         out.close();
     }
+    
+    public boolean deleteImage (String imageName) {
+        return true;
+    }
 }

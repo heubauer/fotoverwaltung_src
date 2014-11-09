@@ -1,8 +1,11 @@
 package com.heubauer.fotoverwaltung;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -49,7 +52,7 @@ public class Image {
      * @throws IOException 
      */
     public void exportImage(String to) throws IOException {
-        curPath = (curPath != null)? curPath : context.getFilesDir() + "Fotos/" + name;
+        curPath = (curPath != null)? curPath : context.getFilesDir() + "/Fotos/" + name;
         FileChannel in = new FileInputStream(curPath).getChannel();
         File oldImage = new File(curPath);
         File newImage = null;
@@ -58,10 +61,8 @@ public class Image {
             if (! publicDir.exists())
                 publicDir.mkdirs();
             newImage = new File(publicDir, name);
-//        } else if("public".equalsIgnoreCase(to)) {
-//            newImage = File.createTempFile("fotoverwaltung", name, context.getExternalCacheDir());
         } else if("private".equalsIgnoreCase(to)){
-            File privateDir = new File(context.getFilesDir() + "Fotos/");
+            File privateDir = new File(context.getFilesDir() + "/Fotos");
             if (! privateDir.exists())
                 privateDir.mkdirs();
             newImage = new File(privateDir, name);
@@ -83,6 +84,12 @@ public class Image {
                 if(oldImage.delete())
                     Log.i("Delete", "Datei erfolgreich aus Cache gelöscht.");
             curPath = newImage.getAbsolutePath();
+            
+            if("galerie".equalsIgnoreCase(to)) {
+                context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(newImage)));
+                Toast galeryToast = Toast.makeText(context, "Export sucessful", Toast.LENGTH_SHORT);
+                galeryToast.show();
+            }
         }
     }
 
