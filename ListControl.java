@@ -72,33 +72,33 @@ public class ListControl {
                 context.startActivity(imageView);
             }
         });
-        pictureList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
-                AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(context);
-                
-                deleteDialogBuilder.setMessage("Wollen Sie das Bild wirklich löschen?")
-                        .setTitle("Bild löschen")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (parser.deleteImage(entry.get("filename"))) {
-                                    Toast deleteToast = Toast.makeText(context, "Bild gelöscht", Toast.LENGTH_SHORT);
-                                    deleteToast.show();
-                                }
-                            }
-                        })
-                        .setNegativeButton("Abbruch", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.i("deleteDialog", "Abbruch gedrück");
-                            }
-                        });
-                
-                AlertDialog deleteDialog = deleteDialogBuilder.create();
-                deleteDialog.show();
-                
-                return true;
-            }
-        });
+//        pictureList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                final HashMap<String, String> entry = (HashMap<String, String>)pictureList.getItemAtPosition(position);
+//                AlertDialog.Builder deleteDialogBuilder = new AlertDialog.Builder(context);
+//                
+//                deleteDialogBuilder.setMessage("Wollen Sie das Bild wirklich löschen?")
+//                        .setTitle("Bild löschen")
+//                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (parser.deleteImage(entry.get("filename"))) {
+//                                    Toast deleteToast = Toast.makeText(context, "Bild gelöscht", Toast.LENGTH_SHORT);
+//                                    deleteToast.show();
+//                                }
+//                            }
+//                        })
+//                        .setNegativeButton("Abbruch", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                Log.i("deleteDialog", "Abbruch gedrück");
+//                            }
+//                        });
+//                
+//                AlertDialog deleteDialog = deleteDialogBuilder.create();
+//                deleteDialog.show();
+//                
+//                return true;
+//            }
+//        });
     }
     
     /**
